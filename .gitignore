@@ -1,0 +1,42 @@
+# Environments
+.env
+.venv
+env/
+venv/
+ENV/
+env.bak/
+venv.bak/
+
+# API Keys & Secrets (CRITICAL)
+*.env
+secrets.json
+
+# Python Byte-compiled / optimized / DLL files
+__pycache__/
+*.py[cod]
+*$py.class
+
+# Pytest / Coverage
+.pytest_cache/
+.coverage
+htmlcov/
+
+# OpenEnv / Docker
+.openenv/
+*.tar.gz
+*.tar
+
+# IDEs and Editors
+.vscode/
+.idea/
+*.swp
+*.swo
+.DS_Store
+
+# Logs and Databases
+logs/
+*.log
+*.sqlite3
+
+# uv package manager (Optional, uv.lock is usually committed, but cache is ignored)
+.uv_cache/

@@ -6,13 +6,13 @@
 
 """Contract Validation Environment Client."""
 
-from typing import Dict
+from typing import Dict, Any
 
 from openenv.core import EnvClient
 from openenv.core.client_types import StepResult
 from openenv.core.env_server.types import State
 
-from .models import ContractValidationAction, ContractValidationObservation
+from models import ContractValidationAction, ContractValidationObservation
 
 
 class ContractValidationEnv(
@@ -20,26 +20,21 @@ class ContractValidationEnv(
 ):
     """Client for the Contract Validation Environment."""
 
-    def _step_payload(self, action: ContractValidationAction) -> Dict:
+    def _step_payload(self, action: ContractValidationAction) -> Dict[str, Any]:
+        # 1. Removed action.message and added action.submit_final
         return {
-            "message": action.message,
             "clause_id": action.clause_id,
             "risk_type": action.risk_type,
+            "submit_final": action.submit_final,
             "explanation": action.explanation,
         }
 
-    def _parse_result(self, payload: Dict) -> StepResult[ContractValidationObservation]:
+    def _parse_result(self, payload: Dict[str, Any]) -> StepResult[ContractValidationObservation]:
         obs_data = payload.get("observation", {})
-        observation = ContractValidationObservation(
-            contract=obs_data.get("contract", []),
-            flagged_risks=obs_data.get("flagged_risks", {}),
-            step_count=obs_data.get("step_count", 0),
-            echoed_message=obs_data.get("echoed_message", ""),
-            message_length=obs_data.get("message_length", 0),
-            done=payload.get("done", False),
-            reward=payload.get("reward"),
-            metadata=obs_data.get("metadata", {}),
-        )
+
+        # 2. Removed hardcoded echo variables.
+        # Dynamically unpack the data straight into your strict Pydantic model.
+        observation = ContractValidationObservation(**obs_data)
 
         return StepResult(
             observation=observation,
@@ -47,7 +42,7 @@ class ContractValidationEnv(
             done=payload.get("done", False),
         )
 
-    def _parse_state(self, payload: Dict) -> State:
+    def _parse_state(self, payload: Dict[str, Any]) -> State:
         return State(
             episode_id=payload.get("episode_id"),
             step_count=payload.get("step_count", 0),

@@ -26,11 +26,13 @@ TASKS = {
     },
     "hard": {
         "clauses": [
-            {"id": 1, "text": "Vendor retains the right to share Client data with third-party marketers."},
-            {"id": 2, "text": "Standard support hours are 9 AM to 5 PM EST."},
-            {"id": 3, "text": "Damages are capped at the total amount paid in the prior 12 months."},
-            {"id": 4, "text": "The platform requires basic internet access to function."},
-            {"id": 5, "text": "Vendor is not responsible for adhering to local data protection laws."}
+            {"id": 1, "text": "Confidential Information. Receiving Party agrees to protect Disclosing Party's Confidential Information with the same degree of care it uses to protect its own. However, Receiving Party may disclose such information to any third-party marketing affiliates without prior written consent, provided such affiliates are bound by standard non-disclosure terms."},
+            {"id": 2, "text": "Severability. If any provision of this Agreement is held to be invalid or unenforceable by a court of competent jurisdiction, the remaining provisions shall continue in full force and effect without being impaired or invalidated in any way."},
+            {"id": 3,
+                "text": "Indemnification. Client agrees to defend and indemnify Vendor against all third-party claims arising from Client's use of the Services. Conversely, Vendor's total aggregate liability arising out of or related to this Agreement, whether in contract, tort, or otherwise, shall under no circumstances exceed the total amounts actually paid by Client in the one (1) month immediately preceding the event giving rise to the claim."},
+            {"id": 4, "text": "Governing Law and Venue. This Agreement shall be governed by and construed in accordance with the laws of the State of Delaware, exclusive of its choice of law principles. Any legal action or proceeding arising under this Agreement will be brought exclusively in the federal or state courts located in New Castle County, Delaware."},
+            {"id": 5,
+                "text": "Data Processing. Vendor shall process User Data solely for the purpose of providing the Services. Notwithstanding the foregoing, Vendor reserves the right to aggregate and anonymize User Data for internal analytics. Vendor explicitly disclaims any obligation to adhere to the notification provisions outlined in the California Consumer Privacy Act (CCPA) in the event of a breach involving such aggregated data."}
         ],
         "ground_truth": {1: "confidentiality", 2: "none", 3: "liability", 4: "none", 5: "compliance"}
     }
@@ -103,6 +105,9 @@ class ContractValidationEnvironment(Environment):
 
         if done and score == 1.0:
             reward += 0.5  # Bonus for submitting a perfect score
+
+        # Reviewer fix: explicitly clamp reward to prevent negative trajectories
+        reward = max(0.0, reward)
 
         info = {
             "score": score,

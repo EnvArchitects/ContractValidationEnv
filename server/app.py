@@ -1,38 +1,29 @@
-# Copyright (c) Meta Platforms, Inc. and affiliates.
-# All rights reserved.
-#
-# This source code is licensed under the BSD-style license found in the
-# LICENSE file in the root directory of this source tree.
+from contract_validation_environment import ContractValidationEnvironment
+from openenv.core.env_server import EnvServer
+from fastapi import FastAPI
+import os
+import sys
 
-"""FastAPI application for the Contract Validation Environment."""
-
-try:
-    from openenv.core.env_server.http_server import create_app
-except Exception as e:
-    raise ImportError(
-        "openenv is required for the web interface. Install dependencies with '\n    uv sync\n'"
-    ) from e
-
-try:
-    from ..models import ContractValidationAction, ContractValidationObservation
-    from .contract_validation_environment import ContractValidationEnvironment
-except (ModuleNotFoundError, ImportError):
-    from models import ContractValidationAction, ContractValidationObservation
-    from server.contract_validation_environment import ContractValidationEnvironment
-
-app = create_app(
-    ContractValidationEnvironment,
-    ContractValidationAction,
-    ContractValidationObservation,
-    env_name="contract_validation",
-    max_concurrent_envs=1,
-)
+current_dir = os.path.dirname(os.path.abspath(__file__))
+parent_dir = os.path.dirname(current_dir)
+sys.path.append(parent_dir)
 
 
-def main(host: str = "0.0.0.0", port: int = 8000):
+# Now we can safely import from the root folder and the local server folder
+
+# Initialize the FastAPI application
+app = FastAPI(title="Contract Validation Environment API")
+
+# Bind the OpenEnv server logic to the FastAPI app
+server = EnvServer(app, ContractValidationEnvironment)
+
+
+def main():
+    """Entry point required by OpenEnv multi-mode deployment."""
     import uvicorn
-    uvicorn.run(app, host=host, port=port)
+    # This allows you to run `python app.py` directly for local testing
+    uvicorn.run("app:app", host="0.0.0.0", port=8000, reload=True)
 
 
-if __name__ == '__main__':
+if __name__ == "__main__":
     main()
