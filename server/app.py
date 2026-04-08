@@ -1,14 +1,18 @@
-from openenv.core.env_server import create_fastapi_app
-
-# 1. Import models from the root folder
-from models import ContractValidationAction, ContractValidationObservation
-
-# 2. Explicitly import the environment class from the "server" folder
 from server.contract_validation_environment import ContractValidationEnvironment
+from models import ContractValidationAction, ContractValidationObservation
+from openenv.core.env_server import create_app
+import os
 
-# Let OpenEnv dynamically generate the FastAPI application for you.
-# NOTICE: We pass ContractValidationEnvironment directly, without ()
-app = create_fastapi_app(
+# 1. FORCE the web interface to turn on before OpenEnv loads
+os.environ["ENABLE_WEB_INTERFACE"] = "true"
+
+
+# 2. Import models from the root folder
+
+# 3. Explicitly import the environment class
+
+# 4. Use create_app (This builds BOTH the backend API and the Gradio frontend)
+app = create_app(
     ContractValidationEnvironment,
     ContractValidationAction,
     ContractValidationObservation
@@ -18,7 +22,6 @@ app = create_fastapi_app(
 def main():
     """Entry point required by OpenEnv multi-mode deployment."""
     import uvicorn
-    # Tell Uvicorn to look inside the server folder for the app
     uvicorn.run("server.app:app", host="0.0.0.0", port=8000, reload=True)
 
 
