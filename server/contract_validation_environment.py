@@ -95,15 +95,18 @@ class ContractValidationEnvironment(Environment):
                     # Harsh penalty for flagging a safe clause
                     score -= 0.5 / max(total_risks, 1)
 
-        # Normalize Grader Score between 0.0 and 1.0
-        score = max(0.0, min(1.0, score))
+        # --- VALIDATOR FIX ---
+        # Normalize Grader Score STRICTLY between 0.01 and 0.99
+        score = max(0.01, min(0.99, score))
 
         # Trajectory Reward: Delta from last step, minus a step penalty
         step_penalty = 0.02
         reward = (score - self._prev_score) - step_penalty
         self._prev_score = score
 
-        if done and score == 1.0:
+        # --- VALIDATOR FIX ---
+        # Adjusted completion bonus threshold to match the new 0.99 maximum
+        if done and score >= 0.99:
             reward += 0.5  # Bonus for submitting a perfect score
 
         # Reviewer fix: explicitly clamp reward to prevent negative trajectories

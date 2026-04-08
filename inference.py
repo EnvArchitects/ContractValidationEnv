@@ -30,13 +30,13 @@ def log_start(task: str) -> None:
 
 def log_step(step: int, reward: float) -> None:
     # Reward must be numeric
-    clamped_reward = max(0.0, round(reward, 2))
+    clamped_reward = max(0, round(reward, 2))
     print(f"[STEP] step={step} reward={clamped_reward}", flush=True)
 
 
 def log_end(task: str, score: float, steps: int) -> None:
-    # Score must be tightly clamped between 0.0 and 1.0
-    final_score = max(0.0, min(1.0, round(score, 2)))
+    # UPDATED: Score must be strictly between 0 and 1 (No 0.0, No 1.0)
+    final_score = max(0.01, min(0.99, round(score, 2)))
     print(f"[END] task={task} score={final_score} steps={steps}", flush=True)
 
 
