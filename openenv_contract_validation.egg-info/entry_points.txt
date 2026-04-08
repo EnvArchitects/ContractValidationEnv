@@ -1,2 +1,0 @@
-[console_scripts]
-server = contract_validation.server.app:main
