@@ -3,15 +3,16 @@ from openenv.core.env_server import create_fastapi_app
 # 1. Import models from the root folder
 from models import ContractValidationAction, ContractValidationObservation
 
-# 2. Explicitly import the environment from the "server" folder
+# 2. Explicitly import the environment class from the "server" folder
 from server.contract_validation_environment import ContractValidationEnvironment
 
-# Instantiate your environment
-env = ContractValidationEnvironment()
-
-# Let OpenEnv dynamically generate the FastAPI application for you
-app = create_fastapi_app(env, ContractValidationAction,
-                         ContractValidationObservation)
+# Let OpenEnv dynamically generate the FastAPI application for you.
+# NOTICE: We pass ContractValidationEnvironment directly, without ()
+app = create_fastapi_app(
+    ContractValidationEnvironment,
+    ContractValidationAction,
+    ContractValidationObservation
+)
 
 
 def main():
