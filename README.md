@@ -26,7 +26,7 @@ The environment features 3 deterministic tasks with increasing complexity:
 
 1. **Easy:** 1 clause. Contains a single, explicit liability risk. Tests basic risk identification.
 2. **Medium:** 3 clauses. Requires identifying payment and termination risks while actively ignoring a safe governing-law distractor clause.
-3. **Hard:** 5 clauses. A complex mix of confidentiality, liability, and compliance risks interspersed with safe, standard boilerplate clauses. Challenges frontier models to avoid false positives.
+3. **Hard:** 5 clauses. A complex mix of confidentiality, liability, and compliance risks interspersed with dense, safe, standard boilerplate clauses. Challenges frontier models to avoid false positives.
 
 ---
 
@@ -51,46 +51,10 @@ The environment features 3 deterministic tasks with increasing complexity:
 The environment utilizes a **trajectory-based reward system**. The grader calculates a score between `0.0` and `1.0` based on precision and recall.
 * **Positive Reward:** Granted for newly correct flags.
 * **Negative Penalty:** Applied for flagging safe clauses or assigning the wrong risk type.
-* **Step Penalty:** A `-0.02` penalty is applied per step to encourage the agent to evaluate the contract efficiently.
+* **Step Penalty:** A `-0.02` penalty is applied per step to encourage the agent to evaluate the contract efficiently. Rewards are clamped to `max(0.0)` to ensure compatibility with OpenEnv graders.
 * **Completion Bonus:** A `+0.5` bonus is awarded if the agent submits the contract with a perfect 1.0 grader score.
 
 ---
-
-## 🛠️ Quick Start
-
-The simplest way to use the environment programmatically is through the `ContractValidationEnv` client:
-
-```python
-from contract_validation import ContractValidationAction, ContractValidationEnv
-
-try:
-    # Create environment from Docker image
-    env = ContractValidationEnv.from_docker_image("openenv-contract-validation:latest")
-
-    # Reset environment to a specific task
-    result = env.reset(task_level="medium")
-    print(f"Clauses to review: {result.observation.contract_clauses}")
-
-    # Take an action: Flag Clause 2 as a payment risk
-    action = ContractValidationAction(
-        clause_id=2, 
-        risk_type="payment", 
-        submit_final=False, 
-        explanation="Clause dictates payment regardless of dispute."
-    )
-    result = env.step(action)
-    print(f"Current Flags: {result.observation.flagged_risks}")
-    print(f"Step Reward: {result.reward}")
-
-    # Submit the final review
-    submit_action = ContractValidationAction(clause_id=0, risk_type="none", submit_final=True)
-    final_result = env.step(submit_action)
-    print(f"Final Score: {final_result.observation.info['score']}")
-
-finally:
-    # Always clean up
-    env.close()
-```
 
 ## Project Structure
 
