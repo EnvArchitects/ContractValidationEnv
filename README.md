@@ -96,17 +96,20 @@ finally:
 
 ```
 contract_validation/
-├── .dockerignore         # Docker build exclusions
+├── .dockerignore          # Docker build exclusions
+├── .env                   # Local environment variables (API keys - DO NOT COMMIT)
+├── .gitignore             # Git tracking exclusions (ignores .env, caches, etc.)
 ├── __init__.py            # Module exports
-├── README.md              # This file
+├── README.md              # Project documentation (with tags: - openenv)
 ├── openenv.yaml           # OpenEnv manifest
 ├── pyproject.toml         # Project metadata and dependencies
 ├── uv.lock                # Locked dependencies (generated)
 ├── client.py              # ContractValidationEnv client
-├── models.py              # Action and Observation models
+├── inference.py           # Evaluation script for the OpenEnv grader (JSON logging)
+├── models.py              # Action and Observation Pydantic models
 ├── Dockerfile             # Container image definition
 └── server/
     ├── __init__.py        # Server module exports
-    ├── contract_validation_environment.py  # Core environment logic
+    ├── contract_validation_environment.py  # Core environment logic and task data
     └── app.py             # FastAPI application (HTTP + WebSocket endpoints)
 ```
