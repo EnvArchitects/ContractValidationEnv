@@ -13,8 +13,15 @@ secrets.json
 
 # Python Byte-compiled / optimized / DLL files
 __pycache__/
+server/__pycache__/
 *.py[cod]
 *$py.class
+
+# Python Package Builds
+*.egg-info/
+openenv_contract_validation.egg-info/
+build/
+dist/
 
 # Pytest / Coverage
 .pytest_cache/
@@ -38,5 +45,5 @@ logs/
 *.log
 *.sqlite3
 
-# uv package manager (Optional, uv.lock is usually committed, but cache is ignored)
+# uv package manager
 .uv_cache/
