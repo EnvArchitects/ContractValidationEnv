@@ -1,19 +1,11 @@
-from contract_validation_environment import ContractValidationEnvironment
-from models import ContractValidationAction, ContractValidationObservation
-from openenv.core.env_server import EnvServer
 from fastapi import FastAPI
-import os
-import sys
+from openenv.core.env_server import EnvServer
 
-# --- THE ULTIMATE PATH FIX ---
-# Force Python to recognize both the root folder AND the server folder
-current_dir = os.path.dirname(os.path.abspath(__file__))
-parent_dir = os.path.dirname(current_dir)
-sys.path.insert(0, parent_dir)
-sys.path.insert(0, current_dir)
+# 1. Import models from the root folder
+from models import ContractValidationAction, ContractValidationObservation
 
-
-# These will now resolve perfectly in the cloud
+# 2. Explicitly import the environment from the "server" folder
+from server.contract_validation_environment import ContractValidationEnvironment
 
 # Initialize the FastAPI application
 app = FastAPI(title="Contract Validation Environment API")
@@ -25,6 +17,7 @@ server = EnvServer(app, ContractValidationEnvironment)
 def main():
     """Entry point required by OpenEnv multi-mode deployment."""
     import uvicorn
+    # Tell Uvicorn to look inside the server folder for the app
     uvicorn.run("server.app:app", host="0.0.0.0", port=8000, reload=True)
 
 
